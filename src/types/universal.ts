@@ -58,7 +58,7 @@ export type TPermition = {
 };
 
 export type TPermitionsDataResponse = {
-  status: boolean;
+  status: boolean | number;
   message: string;
   data: TPermition[];
 };

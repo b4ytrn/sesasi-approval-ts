@@ -60,19 +60,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-
-const permitions = [
-  {
-    id: 26,
-    userId: 40,
-    subject: "Cuti gais",
-    description:
-      "Assalamualaikum pak, izin hari ini saya tidak bisa masuk kantor, dikarenakan saya sedang demam dan flu. Terima kasih",
-    isApplied: 0,
-    created_at: "2024-07-26T03:52:23.000000Z",
-    updated_at: "2024-07-26T04:09:15.000000Z",
-  },
-];
+import { userCancelPermition, userGetPermitionsData } from "@/apis/user";
+import { useEffect, useState } from "react";
+import { TPermition } from "@/types/universal";
+import { TUserCancelPermitionRequest } from "@/types/user";
 
 const FormSchema = z.object({
   description: z
@@ -94,6 +85,9 @@ const FormSchema = z.object({
 });
 
 export const TableListPermition = () => {
+  const [permitionsData, setPermitionData] = useState<TPermition[]>();
+  const [isUpdated, setIsUpdated] = useState(false);
+
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -106,6 +100,48 @@ export const TableListPermition = () => {
       description: "Perubahan berhasil disimpan.",
     });
   }
+
+  async function fetchPermitionsData() {
+    await userGetPermitionsData()
+      .then((response) => {
+        if (response.data.status === 200) {
+          setPermitionData(response.data.data);
+        }
+      })
+      .catch((error) => {
+        toast({
+          title: "Gagal Mengambil Data!",
+          variant: "destructive",
+          description: error.message,
+        });
+      });
+  }
+
+  async function onCancelPermition(data: TUserCancelPermitionRequest) {
+    await userCancelPermition({
+      id: data.id,
+    })
+      .then((response) => {
+        toast({
+          title: "Berhasil!",
+          description: response.data.message,
+        });
+      })
+      .catch((error) => {
+        toast({
+          title: "Gagal!",
+          variant: "destructive",
+          description: error.message,
+        });
+      });
+  }
+
+  useEffect(() => {
+    // call the function
+    fetchPermitionsData();
+    setIsUpdated(false);
+  }, [isUpdated]);
+
   return (
     <div className="mx-6 my-8 flex flex-col gap-6">
       <div className="flex justify-between items-center">
@@ -133,7 +169,7 @@ export const TableListPermition = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {permitions.map((permition, index) => (
+            {permitionsData?.map((permition, index) => (
               <TableRow key={permition.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{permition.subject}</TableCell>
@@ -233,7 +269,13 @@ export const TableListPermition = () => {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Kembali</AlertDialogCancel>
-                        <AlertDialogAction>Yakin</AlertDialogAction>
+                        <AlertDialogAction
+                          onClick={() =>
+                            onCancelPermition({ id: permition.id })
+                          }
+                        >
+                          Yakin
+                        </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>

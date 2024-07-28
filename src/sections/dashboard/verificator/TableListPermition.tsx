@@ -34,7 +34,7 @@ export const TableListPermition = () => {
   const fetchPermitionsData = async () => {
     await verificatorGetPermitionsData()
       .then((response) => {
-        if (response.data.status) {
+        if (response.data.status === true) {
           setPermitionData(response.data.data);
         }
       })
@@ -50,7 +50,7 @@ export const TableListPermition = () => {
   const fetchUsersData = async () => {
     await verificatorGetUsersData()
       .then((response) => {
-        if (response.data.status) {
+        if (response.data.status === 200) {
           setUsersData(response.data.data);
         }
       })
