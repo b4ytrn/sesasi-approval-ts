@@ -1,18 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { LogOut, BookUser, ScrollText, UserCog } from "lucide-react";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
 import { userLogout } from "@/apis/universal";
 import { useToast } from "./ui/use-toast";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
+import DesktopNavMenu from "./DesktopNavMenu";
+import MobileNavMenu from "./MobileNavMenu";
 
-type IProps = {
+type TProps = {
   level: string;
   email: string;
   name: string;
@@ -26,9 +20,11 @@ export const Navbar = ({
   name,
   tabPosition,
   setTabPosition,
-}: IProps) => {
+}: TProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const { width } = useWindowDimensions();
 
   async function onUserLogout() {
     await userLogout()
@@ -49,7 +45,7 @@ export const Navbar = ({
       });
   }
   return (
-    <div className="w-full py-4 px-4 border-b">
+    <div className="w-full py-4 px-4 border-b sticky top-0 bg-white z-50">
       <div className="flex flex-row justify-between">
         <div className="flex">
           <Avatar>
@@ -63,63 +59,21 @@ export const Navbar = ({
             <p className="text-sm text-slate-400">{email}</p>
           </div>
         </div>
-        <NavigationMenu>
-          {(level === "1" || level === "2") && (
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  active={tabPosition == 1 ? true : false}
-                  onClick={() => setTabPosition(1)}
-                >
-                  <BookUser className="mr-2 h-4 w-4" /> Daftar Pengguna
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  active={tabPosition == 2 ? true : false}
-                  onClick={() => setTabPosition(2)}
-                >
-                  <ScrollText className="mr-2 h-4 w-4" /> Daftar Perizinan
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          )}
-          {level === "3" && (
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  active={tabPosition == 1 ? true : false}
-                  onClick={() => setTabPosition(1)}
-                >
-                  <ScrollText className="mr-2 h-4 w-4" /> Daftar Perizinan
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  active={tabPosition == 2 ? true : false}
-                  onClick={() => setTabPosition(2)}
-                >
-                  <UserCog className="mr-2 h-4 w-4" /> Pengaturan Akun
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          )}
-        </NavigationMenu>
-        <div>
-          <Button
-            variant="destructive"
-            onClick={() => {
-              onUserLogout();
-            }}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Keluar
-          </Button>
-        </div>
+        {width >= 768 ? (
+          <DesktopNavMenu
+            level={level}
+            onUserLogout={onUserLogout}
+            setTabPosition={setTabPosition}
+            tabPosition={tabPosition}
+          />
+        ) : (
+          <MobileNavMenu
+            level={level}
+            onUserLogout={onUserLogout}
+            setTabPosition={setTabPosition}
+            tabPosition={tabPosition}
+          />
+        )}
       </div>
     </div>
   );

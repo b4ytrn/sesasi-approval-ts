@@ -83,7 +83,7 @@ export const TableUsers = () => {
   // console.log(updatePassId);
   return (
     <div className="mx-6 my-8 flex flex-col gap-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row  md:justify-between items-start gap-6 md:items-center">
         <div className="flex flex-col gap-2">
           <h2 className="font-bold text-2xl">Tabel Daftar Pengguna</h2>
           <p className="text-slate-400">

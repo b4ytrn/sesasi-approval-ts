@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { ClipboardPlus } from "lucide-react";
+import { ClipboardEdit } from "lucide-react";
 import {
   FormControl,
   FormField,
@@ -97,7 +97,7 @@ const FormEditPermition = ({ permition, setIsUpdated }: TProps) => {
             <Tooltip delayDuration={200}>
               <TooltipTrigger>
                 <Button variant="outline" size="icon">
-                  <ClipboardPlus className="h-4 w-4" />
+                  <ClipboardEdit className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Ubah Detail Perizinan</TooltipContent>
