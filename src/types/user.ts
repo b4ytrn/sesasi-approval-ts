@@ -49,3 +49,14 @@ export type TUserAddPermitionResponse = {
     "id" | "userId" | "subject" | "description" | "created_at" | "updated_at"
   >;
 };
+
+export type TUserResetPasswordRequest = {
+  id: number;
+  password: string;
+};
+
+export type TUserResetPasswordResponse = {
+  status: boolean;
+  message: string;
+  data: number;
+};

@@ -9,6 +9,8 @@ import {
   TUserCheckPermitionResponse,
   TUserDeletePermitionRequest,
   TUserDeletePermitionResponse,
+  TUserResetPasswordRequest,
+  TUserResetPasswordResponse,
 } from "@/types/user";
 
 export const userGetPermitionsData = () => {
@@ -42,5 +44,17 @@ export const userAddPermition = (data: TUserAddPermitionRequest) => {
     "/api/permittion",
     data
   );
+  return response;
+};
+
+export const userResetPassword = (data: TUserResetPasswordRequest) => {
+  const newPass = {
+    password: data.password,
+  };
+  const response = instance.post<TUserResetPasswordResponse>(
+    `/api/user-updatepass/${data.id}`,
+    newPass
+  );
+
   return response;
 };
