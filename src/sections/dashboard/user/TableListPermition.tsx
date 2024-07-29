@@ -8,7 +8,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { CircleX, ClipboardEdit, ClipboardPlus, Trash2 } from "lucide-react";
+import {
+  CheckCircle,
+  CircleX,
+  ClipboardEdit,
+  ClipboardPlus,
+  Info,
+  Trash2,
+} from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -51,6 +58,7 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   userCancelPermition,
+  userCheckPermition,
   userDeletePermition,
   userGetPermitionsData,
 } from "@/apis/user";
@@ -58,6 +66,7 @@ import { useEffect, useState } from "react";
 import { TPermition } from "@/types/universal";
 import {
   TUserCancelPermitionRequest,
+  TUserCheckPermitionRequest,
   TUserDeletePermitionRequest,
 } from "@/types/user";
 import NoDataTable from "@/components/NoDataTable";
@@ -139,6 +148,35 @@ export const TableListPermition = () => {
         toast({
           title: "Berhasil!",
           description: response.data.message,
+        });
+        setIsUpdated(true);
+      })
+      .catch((error) => {
+        toast({
+          title: "Gagal!",
+          variant: "destructive",
+          description: error.message,
+        });
+      });
+  }
+
+  async function onCheckPermition(data: TUserCheckPermitionRequest) {
+    await userCheckPermition({
+      id: data.id,
+    })
+      .then((response) => {
+        toast({
+          title: "Status Perizinan : ",
+          description: (
+            <div className="flex items-center gap-2">
+              {response.data.data.status === "Belum diizinkan" ? (
+                <Info className="w-4 h-4" color="#c25d5d" />
+              ) : (
+                <CheckCircle className="w-4 h-4" color="#6ac25d" />
+              )}
+              {response.data.data.status}
+            </div>
+          ),
         });
         setIsUpdated(true);
       })
@@ -265,6 +303,22 @@ export const TableListPermition = () => {
                         </DialogContent>
                       </Dialog>
                     </Form>
+                    <TooltipProvider>
+                      <Tooltip delayDuration={200}>
+                        <TooltipTrigger>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() =>
+                              onCheckPermition({ id: permition.id })
+                            }
+                          >
+                            <Info className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Cek Status Perizinan</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <AlertDialog>
                       <AlertDialogTrigger>
                         <TooltipProvider>

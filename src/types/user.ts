@@ -1,3 +1,5 @@
+import { TPermition } from "./universal";
+
 export type TUserCancelPermitionRequest = {
   id: number;
 };
@@ -18,5 +20,18 @@ export type TUserDeletePermitionResponse = {
   data: {
     status: string;
     message: string;
+  };
+};
+
+export type TUserCheckPermitionRequest = {
+  id: number;
+};
+
+export type TUserCheckPermitionResponse = {
+  status: boolean;
+  message: string;
+  data: {
+    status: string;
+    data: TPermition;
   };
 };
