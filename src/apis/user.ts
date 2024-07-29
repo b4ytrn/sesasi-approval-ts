@@ -9,6 +9,7 @@ import {
   TUserCheckPermitionResponse,
   TUserDeletePermitionRequest,
   TUserDeletePermitionResponse,
+  TUserEditPermitionRequest,
   TUserResetPasswordRequest,
   TUserResetPasswordResponse,
 } from "@/types/user";
@@ -56,5 +57,17 @@ export const userResetPassword = (data: TUserResetPasswordRequest) => {
     newPass
   );
 
+  return response;
+};
+
+export const userEditPermition = (data: TUserEditPermitionRequest) => {
+  const editedPermition = {
+    subject: data.subject,
+    description: data.description,
+  };
+  const response = instance.put<TUserAddPermitionResponse>(
+    `/api/permittion/${data.permitionId}`,
+    editedPermition
+  );
   return response;
 };

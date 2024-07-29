@@ -60,3 +60,15 @@ export type TUserResetPasswordResponse = {
   message: string;
   data: number;
 };
+
+export type TUserEditPermitionRequest = {
+  permitionId: number;
+  subject: string;
+  description: string;
+};
+
+export type TUserEditPermitionResponse = {
+  status: boolean;
+  message: string;
+  data: number;
+};

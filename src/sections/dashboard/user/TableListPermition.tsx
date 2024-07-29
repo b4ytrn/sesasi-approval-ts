@@ -43,6 +43,7 @@ import {
 } from "@/types/user";
 import NoDataTable from "@/components/NoDataTable";
 import FormAddPermition from "@/components/user/FormAddPermition";
+import FormEditPermition from "@/components/user/FormEditPermition";
 
 export const TableListPermition = () => {
   const [permitionsData, setPermitionData] = useState<TPermition[]>();
@@ -177,6 +178,10 @@ export const TableListPermition = () => {
                     {new Date(permition.updated_at).toDateString()}
                   </TableCell>
                   <TableCell className="flex gap-1">
+                    <FormEditPermition
+                      setIsUpdated={setIsUpdated}
+                      permition={permition}
+                    />
                     <TooltipProvider>
                       <Tooltip delayDuration={200}>
                         <TooltipTrigger>
