@@ -17,6 +17,7 @@ import {
 } from "@/apis/verificator";
 import { TPermition, TUserData } from "@/types/universal";
 import FormResponsePermition from "@/components/verificator/FormResponsePermition";
+import NoDataTable from "@/components/NoDataTable";
 
 export const TableListPermition = () => {
   const { toast } = useToast();
@@ -34,9 +35,7 @@ export const TableListPermition = () => {
   const fetchPermitionsData = async () => {
     await verificatorGetPermitionsData()
       .then((response) => {
-        if (response.data.status === true) {
-          setPermitionData(response.data.data);
-        }
+        setPermitionData(response.data.data);
       })
       .catch((error) => {
         toast({
@@ -50,9 +49,7 @@ export const TableListPermition = () => {
   const fetchUsersData = async () => {
     await verificatorGetUsersData()
       .then((response) => {
-        if (response.data.status === 200) {
-          setUsersData(response.data.data);
-        }
+        setUsersData(response.data.data);
       })
       .catch((error) => {
         toast({
@@ -73,54 +70,59 @@ export const TableListPermition = () => {
           </p>
         </div>
       </div>
-      <Card>
-        <Table className="p-4">
-          <TableHeader>
-            <TableRow>
-              <TableHead>No.</TableHead>
-              <TableHead>Subjek</TableHead>
-              <TableHead>Deskripsi</TableHead>
-              <TableHead>Diajukan Oleh</TableHead>
-              <TableHead>Status Pengajuan</TableHead>
-              <TableHead>Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {permitionsData?.map((permition, index) => (
-              <TableRow key={permition.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{permition.subject}</TableCell>
-                <TableCell>{permition.description}</TableCell>
-                <TableCell>
-                  {userData?.map(
-                    (user) => user.id == permition.userId && user.name
-                  )}
-                </TableCell>
-                <TableCell>
-                  {permition.isApplied == 1 ? (
-                    <Badge variant="success">
-                      <ClipboardCheck className="h-4 w-4 mr-1" /> Sudah Direspon
-                    </Badge>
-                  ) : (
-                    <Badge variant="destructive">
-                      <ClipboardX className="h-4 w-4 mr-1" />
-                      Belum Direspon
-                    </Badge>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <FormResponsePermition
-                    isApplied={permition.isApplied}
-                    permittionId={permition.id}
-                    userId={permition.userId}
-                    verificatorId={verificatorId}
-                  />
-                </TableCell>
+      {permitionsData?.length === 0 ? (
+        <NoDataTable />
+      ) : (
+        <Card>
+          <Table className="p-4">
+            <TableHeader>
+              <TableRow>
+                <TableHead>No.</TableHead>
+                <TableHead>Subjek</TableHead>
+                <TableHead>Deskripsi</TableHead>
+                <TableHead>Diajukan Oleh</TableHead>
+                <TableHead>Status Pengajuan</TableHead>
+                <TableHead>Aksi</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+            </TableHeader>
+            <TableBody>
+              {permitionsData?.map((permition, index) => (
+                <TableRow key={permition.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{permition.subject}</TableCell>
+                  <TableCell>{permition.description}</TableCell>
+                  <TableCell>
+                    {userData?.map(
+                      (user) => user.id == permition.userId && user.name
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {permition.isApplied == 1 ? (
+                      <Badge variant="success">
+                        <ClipboardCheck className="h-4 w-4 mr-1" /> Sudah
+                        Direspon
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive">
+                        <ClipboardX className="h-4 w-4 mr-1" />
+                        Belum Direspon
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <FormResponsePermition
+                      isApplied={permition.isApplied}
+                      permittionId={permition.id}
+                      userId={permition.userId}
+                      verificatorId={verificatorId}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
     </div>
   );
 };

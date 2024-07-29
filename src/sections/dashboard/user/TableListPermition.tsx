@@ -7,17 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  CircleX,
-  ClipboardCheck,
-  ClipboardEdit,
-  ClipboardPlus,
-  ClipboardX,
-  MessageCircle,
-  Trash2,
-} from "lucide-react";
+import { CircleX, ClipboardEdit, ClipboardPlus, Trash2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -40,14 +31,12 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -60,10 +49,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { userCancelPermition, userGetPermitionsData } from "@/apis/user";
+import {
+  userCancelPermition,
+  userDeletePermition,
+  userGetPermitionsData,
+} from "@/apis/user";
 import { useEffect, useState } from "react";
 import { TPermition } from "@/types/universal";
-import { TUserCancelPermitionRequest } from "@/types/user";
+import {
+  TUserCancelPermitionRequest,
+  TUserDeletePermitionRequest,
+} from "@/types/user";
+import NoDataTable from "@/components/NoDataTable";
 
 const FormSchema = z.object({
   description: z
@@ -104,9 +101,7 @@ export const TableListPermition = () => {
   async function fetchPermitionsData() {
     await userGetPermitionsData()
       .then((response) => {
-        if (response.data.status === 200) {
-          setPermitionData(response.data.data);
-        }
+        setPermitionData(response.data.data);
       })
       .catch((error) => {
         toast({
@@ -126,6 +121,26 @@ export const TableListPermition = () => {
           title: "Berhasil!",
           description: response.data.message,
         });
+      })
+      .catch((error) => {
+        toast({
+          title: "Gagal!",
+          variant: "destructive",
+          description: error.message,
+        });
+      });
+  }
+
+  async function onDeletePermition(data: TUserDeletePermitionRequest) {
+    await userDeletePermition({
+      id: data.id,
+    })
+      .then((response) => {
+        toast({
+          title: "Berhasil!",
+          description: response.data.message,
+        });
+        setIsUpdated(true);
       })
       .catch((error) => {
         toast({
@@ -156,162 +171,174 @@ export const TableListPermition = () => {
           Buat Izin Baru
         </Button>
       </div>
-      <Card>
-        <Table className="p-4">
-          <TableHeader>
-            <TableRow>
-              <TableHead>No.</TableHead>
-              <TableHead>Subjek</TableHead>
-              <TableHead>Deskripsi</TableHead>
-              <TableHead>Dibuat Pada</TableHead>
-              <TableHead>Diubah Pada</TableHead>
-              <TableHead>Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {permitionsData?.map((permition, index) => (
-              <TableRow key={permition.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{permition.subject}</TableCell>
-                <TableCell>{permition.description}</TableCell>
-                <TableCell>
-                  {new Date(permition.created_at).toDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(permition.updated_at).toDateString()}
-                </TableCell>
-                <TableCell className="flex gap-1">
-                  <Form {...form}>
-                    <Dialog>
-                      <DialogTrigger>
+      {permitionsData?.length === 0 ? (
+        <NoDataTable />
+      ) : (
+        <Card>
+          <Table className="p-4">
+            <TableHeader>
+              <TableRow>
+                <TableHead>No.</TableHead>
+                <TableHead>Subjek</TableHead>
+                <TableHead>Deskripsi</TableHead>
+                <TableHead>Dibuat Pada</TableHead>
+                <TableHead>Diubah Pada</TableHead>
+                <TableHead>Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {permitionsData?.map((permition, index) => (
+                <TableRow key={permition.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{permition.subject}</TableCell>
+                  <TableCell>{permition.description}</TableCell>
+                  <TableCell>
+                    {new Date(permition.created_at).toDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(permition.updated_at).toDateString()}
+                  </TableCell>
+                  <TableCell className="flex gap-1">
+                    <Form {...form}>
+                      <Dialog>
+                        <DialogTrigger>
+                          <TooltipProvider>
+                            <Tooltip delayDuration={200}>
+                              <TooltipTrigger>
+                                <Button variant="outline" size="icon">
+                                  <ClipboardEdit className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Ubah Perizinan</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Ubah Perizinan</DialogTitle>
+                            <DialogDescription>
+                              Ini akan memperbarui detail perizinan kamu.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className="space-y-6"
+                          >
+                            <FormField
+                              control={form.control}
+                              name="subject"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Subjek</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      id="subject"
+                                      placeholder="Masukkan subjek izin"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="description"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Deskripsi</FormLabel>
+                                  <FormControl>
+                                    <Textarea
+                                      placeholder="Berikan deskripsi yang jelas kenapa kamu mengajukan izin."
+                                      className="resize-none"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button type="submit" className="w-full">
+                              Kirim Respon
+                            </Button>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    </Form>
+                    <AlertDialog>
+                      <AlertDialogTrigger>
                         <TooltipProvider>
                           <Tooltip delayDuration={200}>
                             <TooltipTrigger>
                               <Button variant="outline" size="icon">
-                                <ClipboardEdit className="h-4 w-4" />
+                                <CircleX className="h-4 w-4" />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent>Ubah Perizinan</TooltipContent>
+                            <TooltipContent>Batalkan Perizinan</TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Ubah Perizinan</DialogTitle>
-                          <DialogDescription>
-                            Ini akan memperbarui detail perizinan kamu.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form
-                          onSubmit={form.handleSubmit(onSubmit)}
-                          className="space-y-6"
-                        >
-                          <FormField
-                            control={form.control}
-                            name="subject"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Subjek</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    id="subject"
-                                    placeholder="Masukkan subjek izin"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Deskripsi</FormLabel>
-                                <FormControl>
-                                  <Textarea
-                                    placeholder="Berikan deskripsi yang jelas kenapa kamu mengajukan izin."
-                                    className="resize-none"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <Button type="submit" className="w-full">
-                            Kirim Respon
-                          </Button>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
-                  </Form>
-                  <AlertDialog>
-                    <AlertDialogTrigger>
-                      <TooltipProvider>
-                        <Tooltip delayDuration={200}>
-                          <TooltipTrigger>
-                            <Button variant="outline" size="icon">
-                              <CircleX className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Batalkan Perizinan</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Batalkan Perizinan</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Apakah kamu yakin untuk membatalkan perizinan?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Kembali</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() =>
-                            onCancelPermition({ id: permition.id })
-                          }
-                        >
-                          Yakin
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Batalkan Perizinan
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Apakah kamu yakin untuk membatalkan perizinan?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Kembali</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() =>
+                              onCancelPermition({ id: permition.id })
+                            }
+                          >
+                            Yakin
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
 
-                  <AlertDialog>
-                    <AlertDialogTrigger>
-                      <TooltipProvider>
-                        <Tooltip delayDuration={200}>
-                          <TooltipTrigger>
-                            <Button variant="outline" size="icon">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Hapus Perizinan</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Hapus Perizinan</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Apakah kamu yakin untuk menghapus perizinan?
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Kembali</AlertDialogCancel>
-                        <AlertDialogAction>Yakin</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+                    <AlertDialog>
+                      <AlertDialogTrigger>
+                        <TooltipProvider>
+                          <Tooltip delayDuration={200}>
+                            <TooltipTrigger>
+                              <Button variant="outline" size="icon">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Hapus Perizinan</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Hapus Perizinan</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Apakah kamu yakin untuk menghapus perizinan?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Kembali</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => {
+                              onDeletePermition({ id: permition.id });
+                            }}
+                          >
+                            Yakin
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
     </div>
   );
 };

@@ -34,6 +34,7 @@ import { TAdminChangeUserLevelRequest } from "@/types/admin";
 import { TUserData } from "@/types/universal";
 import FormUpdatePassword from "@/components/admin/FormUpdatePassword";
 import FormNewVerificator from "@/components/admin/FormNewVerificator";
+import NoDataTable from "@/components/NoDataTable";
 
 export const TableUsers = () => {
   const { toast } = useToast();
@@ -62,9 +63,7 @@ export const TableUsers = () => {
   const fetchUsersData = async () => {
     await adminGetUsersData()
       .then((response) => {
-        if (response.data.status) {
-          setUsersData(response.data.data);
-        }
+        setUsersData(response.data.data);
       })
       .catch((error) => {
         toast({
@@ -91,82 +90,87 @@ export const TableUsers = () => {
             Berisi informasi mengenai pengguna sistem.
           </p>
         </div>
-
         <FormNewVerificator setIsUpdated={setIsUpdated} />
       </div>
-      <Card>
-        <Table className="p-4">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nama Lengkap</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Level</TableHead>
-              <TableHead>Status Verifikasi</TableHead>
-              <TableHead>Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {usersData?.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.level}</TableCell>
-                <TableCell>
-                  {user.isVerified == 1 ? (
-                    <Badge variant="success">
-                      <ShieldCheck className="h-4 w-4 mr-1" /> Terverifikasi
-                    </Badge>
-                  ) : (
-                    <Badge variant="destructive">
-                      <ShieldX className="h-4 w-4 mr-1" />
-                      Belum Terverifikasi
-                    </Badge>
-                  )}
-                </TableCell>
-                <TableCell className="flex gap-2">
-                  <AlertDialog>
-                    <AlertDialogTrigger>
-                      <TooltipProvider>
-                        <Tooltip delayDuration={200}>
-                          <TooltipTrigger>
-                            <Button variant="outline" size="icon">
-                              <UserCog className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Jadikan Verifikator</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Jadikan sebagai verifikator?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Jika <span className="font-bold">{user.name}</span>{" "}
-                          sudah menjadi verifikator, maka tidak bisa
-                          dikembalikan menjadi pengguna biasa.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => onChangeVerificator({ id: user.id })}
-                        >
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  <FormUpdatePassword user={{ id: user.id, name: user.name }} />
-                </TableCell>
+      {usersData?.length === 0 ? (
+        <NoDataTable />
+      ) : (
+        <Card>
+          <Table className="p-4">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nama Lengkap</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Level</TableHead>
+                <TableHead>Status Verifikasi</TableHead>
+                <TableHead>Aksi</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+            </TableHeader>
+            <TableBody>
+              {usersData?.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.level}</TableCell>
+                  <TableCell>
+                    {user.isVerified == 1 ? (
+                      <Badge variant="success">
+                        <ShieldCheck className="h-4 w-4 mr-1" /> Terverifikasi
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive">
+                        <ShieldX className="h-4 w-4 mr-1" />
+                        Belum Terverifikasi
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="flex gap-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger>
+                        <TooltipProvider>
+                          <Tooltip delayDuration={200}>
+                            <TooltipTrigger>
+                              <Button variant="outline" size="icon">
+                                <UserCog className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Jadikan Verifikator</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Jadikan sebagai verifikator?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Jika <span className="font-bold">{user.name}</span>{" "}
+                            sudah menjadi verifikator, maka tidak bisa
+                            dikembalikan menjadi pengguna biasa.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => onChangeVerificator({ id: user.id })}
+                          >
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    <FormUpdatePassword
+                      user={{ id: user.id, name: user.name }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
     </div>
   );
 };

@@ -23,6 +23,7 @@ import {
   verificatorVerifyUser,
 } from "@/apis/verificator";
 import { useToast } from "@/components/ui/use-toast";
+import NoDataTable from "@/components/NoDataTable";
 
 export const TableUsers = () => {
   const { toast } = useToast();
@@ -32,9 +33,7 @@ export const TableUsers = () => {
   const fetchUsersData = async () => {
     await verificatorGetUsersData()
       .then((response) => {
-        if (response.data.status) {
-          setUsersData(response.data.data);
-        }
+        setUsersData(response.data.data);
       })
       .catch((error) => {
         toast({
@@ -79,63 +78,67 @@ export const TableUsers = () => {
           </p>
         </div>
       </div>
-      <Card>
-        <Table className="p-4">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nama Lengkap</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Level</TableHead>
-              <TableHead>Status Verifikasi</TableHead>
-              <TableHead>Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {usersData?.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.level}</TableCell>
-                <TableCell>
-                  {user.isVerified == 1 ? (
-                    <Badge variant="success">
-                      <ShieldCheck className="h-4 w-4 mr-1" /> Terverifikasi
-                    </Badge>
-                  ) : (
-                    <Badge variant="destructive">
-                      <ShieldX className="h-4 w-4 mr-1" />
-                      Belum Terverifikasi
-                    </Badge>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <TooltipProvider>
-                    <Tooltip delayDuration={200}>
-                      <TooltipTrigger>
-                        <Button
-                          disabled={user.isVerified == 1 ? true : false}
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleVerifyUser(user.id)}
-                        >
-                          <UserRoundCog className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {user.isVerified == 1 ? (
-                          <p>Sudah Terverifikasi</p>
-                        ) : (
-                          <p>Verifikasi Pengguna</p>
-                        )}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TableCell>
+      {usersData?.length === 0 ? (
+        <NoDataTable />
+      ) : (
+        <Card>
+          <Table className="p-4">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nama Lengkap</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Level</TableHead>
+                <TableHead>Status Verifikasi</TableHead>
+                <TableHead>Aksi</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+            </TableHeader>
+            <TableBody>
+              {usersData?.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.level}</TableCell>
+                  <TableCell>
+                    {user.isVerified == 1 ? (
+                      <Badge variant="success">
+                        <ShieldCheck className="h-4 w-4 mr-1" /> Terverifikasi
+                      </Badge>
+                    ) : (
+                      <Badge variant="destructive">
+                        <ShieldX className="h-4 w-4 mr-1" />
+                        Belum Terverifikasi
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip delayDuration={200}>
+                        <TooltipTrigger>
+                          <Button
+                            disabled={user.isVerified == 1 ? true : false}
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleVerifyUser(user.id)}
+                          >
+                            <UserRoundCog className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {user.isVerified == 1 ? (
+                            <p>Sudah Terverifikasi</p>
+                          ) : (
+                            <p>Verifikasi Pengguna</p>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
     </div>
   );
 };
