@@ -8,17 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  CheckCircle,
-  CircleX,
-  ClipboardEdit,
-  ClipboardPlus,
-  Info,
-  Trash2,
-} from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { CheckCircle, CircleX, Info, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 import {
@@ -27,23 +17,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,7 +28,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
 import {
   userCancelPermition,
   userCheckPermition,
@@ -70,42 +42,13 @@ import {
   TUserDeletePermitionRequest,
 } from "@/types/user";
 import NoDataTable from "@/components/NoDataTable";
-
-const FormSchema = z.object({
-  description: z
-    .string({ required_error: "Deskripsi harus diisi." })
-    .min(5, {
-      message: "Deksripsi harus lebih dari 5 huruf.",
-    })
-    .max(300, {
-      message: "Deskripsi harus kurang dari 300 huruf.",
-    }),
-  subject: z
-    .string({ required_error: "Subjek harus diisi." })
-    .min(5, {
-      message: "Subjek harus lebih dari 5 huruf.",
-    })
-    .max(300, {
-      message: "Deskripsi harus kurang dari 300 huruf.",
-    }),
-});
+import FormAddPermition from "@/components/user/FormAddPermition";
 
 export const TableListPermition = () => {
   const [permitionsData, setPermitionData] = useState<TPermition[]>();
   const [isUpdated, setIsUpdated] = useState(false);
 
   const { toast } = useToast();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  });
-
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    toast({
-      title: "Berhasil!",
-      description: "Perubahan berhasil disimpan.",
-    });
-  }
 
   async function fetchPermitionsData() {
     await userGetPermitionsData()
@@ -204,10 +147,7 @@ export const TableListPermition = () => {
             Berisi informasi mengenai semua data perizinan.
           </p>
         </div>
-        <Button>
-          <ClipboardPlus className="h-4 w-4 mr-2" />
-          Buat Izin Baru
-        </Button>
+        <FormAddPermition setIsUpdated={setIsUpdated} />
       </div>
       {permitionsData?.length === 0 ? (
         <NoDataTable />
@@ -237,72 +177,6 @@ export const TableListPermition = () => {
                     {new Date(permition.updated_at).toDateString()}
                   </TableCell>
                   <TableCell className="flex gap-1">
-                    <Form {...form}>
-                      <Dialog>
-                        <DialogTrigger>
-                          <TooltipProvider>
-                            <Tooltip delayDuration={200}>
-                              <TooltipTrigger>
-                                <Button variant="outline" size="icon">
-                                  <ClipboardEdit className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Ubah Perizinan</TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Ubah Perizinan</DialogTitle>
-                            <DialogDescription>
-                              Ini akan memperbarui detail perizinan kamu.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-6"
-                          >
-                            <FormField
-                              control={form.control}
-                              name="subject"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Subjek</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      id="subject"
-                                      placeholder="Masukkan subjek izin"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <FormField
-                              control={form.control}
-                              name="description"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Deskripsi</FormLabel>
-                                  <FormControl>
-                                    <Textarea
-                                      placeholder="Berikan deskripsi yang jelas kenapa kamu mengajukan izin."
-                                      className="resize-none"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <Button type="submit" className="w-full">
-                              Kirim Respon
-                            </Button>
-                          </form>
-                        </DialogContent>
-                      </Dialog>
-                    </Form>
                     <TooltipProvider>
                       <Tooltip delayDuration={200}>
                         <TooltipTrigger>

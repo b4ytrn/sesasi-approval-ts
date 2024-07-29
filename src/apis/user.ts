@@ -1,6 +1,8 @@
 import { TPermitionsDataResponse } from "@/types/universal";
 import instance from "./base-api";
 import {
+  TUserAddPermitionRequest,
+  TUserAddPermitionResponse,
   TUserCancelPermitionRequest,
   TUserCancelPermitionResponse,
   TUserCheckPermitionRequest,
@@ -31,6 +33,14 @@ export const userDeletePermition = (data: TUserDeletePermitionRequest) => {
 export const userCheckPermition = (data: TUserCheckPermitionRequest) => {
   const response = instance.get<TUserCheckPermitionResponse>(
     `/api/permittion/${data.id}`
+  );
+  return response;
+};
+
+export const userAddPermition = (data: TUserAddPermitionRequest) => {
+  const response = instance.post<TUserAddPermitionResponse>(
+    "/api/permittion",
+    data
   );
   return response;
 };

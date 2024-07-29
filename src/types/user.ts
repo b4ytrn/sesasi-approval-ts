@@ -35,3 +35,17 @@ export type TUserCheckPermitionResponse = {
     data: TPermition;
   };
 };
+
+export type TUserAddPermitionRequest = {
+  subject: string;
+  description: string;
+};
+
+export type TUserAddPermitionResponse = {
+  status: boolean;
+  message: string;
+  data: Pick<
+    TPermition,
+    "id" | "userId" | "subject" | "description" | "created_at" | "updated_at"
+  >;
+};
