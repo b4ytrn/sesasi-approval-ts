@@ -3,6 +3,18 @@ export type TUserCredential = {
   password: string;
 };
 
+export type TUserRegisterRequest = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export type TUserRegisterResponse = {
+  data: Pick<TUserData, "id" | "name" | "email" | "created_at" | "updated_at">;
+  access_token: string;
+  token_type: string;
+};
+
 export type TLoginResponse = {
   status: boolean;
   message: string;

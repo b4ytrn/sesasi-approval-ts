@@ -30,7 +30,7 @@ const FormSchema = z.object({
     .email("Email tidak valid."),
   password: z
     .string({ required_error: "Password tidak boleh kosong." })
-    .max(32, "Password maksimal 32 karakter."),
+    .max(100, "Password maksimal 32 karakter."),
 });
 export const Login = () => {
   const navigate = useNavigate();
@@ -132,10 +132,22 @@ export const Login = () => {
                     )}
                   />
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex flex-col">
                   <Button type="submit" className="w-full">
                     Masuk Sekarang
                   </Button>
+                  <div className="flex items-center mt-3">
+                    <p>Ingin daftar sebagai pengguna?</p>
+                    <Button
+                      className="pl-2"
+                      variant="link"
+                      onClick={() => {
+                        navigate("/register");
+                      }}
+                    >
+                      Klik Disini
+                    </Button>
+                  </div>
                 </CardFooter>
               </form>
             </FormProvider>
@@ -191,10 +203,22 @@ export const Login = () => {
                     )}
                   />
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex flex-col">
                   <Button type="submit" className="w-full">
                     Masuk Sekarang
                   </Button>
+                  <div className="flex items-center mt-3">
+                    <p>Ingin daftar sebagai pengguna?</p>
+                    <Button
+                      className="pl-2"
+                      variant="link"
+                      onClick={() => {
+                        navigate("/register");
+                      }}
+                    >
+                      Klik Disini
+                    </Button>
+                  </div>
                 </CardFooter>
               </form>
             </FormProvider>
@@ -248,10 +272,22 @@ export const Login = () => {
                     )}
                   />
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex flex-col">
                   <Button type="submit" className="w-full">
                     Masuk Sekarang
                   </Button>
+                  <div className="flex items-center mt-3">
+                    <p>Ingin daftar sebagai pengguna?</p>
+                    <Button
+                      className="pl-2"
+                      variant="link"
+                      onClick={() => {
+                        navigate("/register");
+                      }}
+                    >
+                      Klik Disini
+                    </Button>
+                  </div>
                 </CardFooter>
               </form>
             </FormProvider>
