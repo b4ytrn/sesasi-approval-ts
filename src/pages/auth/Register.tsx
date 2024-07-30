@@ -77,8 +77,8 @@ export const Register = () => {
       <Card className="mx-auto w-[350px]">
         <FormProvider {...form}>
           <CardHeader>
-            <CardTitle>Masuk User</CardTitle>
-            <CardDescription>Silahkan masuk sebagai user.</CardDescription>
+            <CardTitle>Daftar User</CardTitle>
+            <CardDescription>Silahkan masukkan informasi akun.</CardDescription>
           </CardHeader>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <CardContent className="space-y-2">
@@ -148,7 +148,7 @@ export const Register = () => {
                     navigate("/login");
                   }}
                 >
-                  Klik Disini
+                  Masuk Disini
                 </Button>
               </div>
             </CardFooter>

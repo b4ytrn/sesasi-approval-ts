@@ -145,7 +145,7 @@ export const Login = () => {
                         navigate("/register");
                       }}
                     >
-                      Klik Disini
+                      Daftar Disini
                     </Button>
                   </div>
                 </CardFooter>
@@ -216,7 +216,7 @@ export const Login = () => {
                         navigate("/register");
                       }}
                     >
-                      Klik Disini
+                      Daftar Disini
                     </Button>
                   </div>
                 </CardFooter>
@@ -285,7 +285,7 @@ export const Login = () => {
                         navigate("/register");
                       }}
                     >
-                      Klik Disini
+                      Daftar Disini
                     </Button>
                   </div>
                 </CardFooter>
